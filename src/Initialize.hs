@@ -131,3 +131,25 @@ deriveInit(Int64)
 deriveInit(Char)
 
 -----------------------------------------------------------------------------------
+
+#define deriveDeinit(ty)               \
+instance Deinitialize (ty) where {     \
+   deinitialize _ = return ()          \
+;  deinitializeElemOff _ _ = return () \
+;  deinitializeElems _ _ = return ()   \
+;  {-# INLINE deinitialize #-}         \
+;  {-# INLINE deinitializeElemOff #-}  \
+;  {-# INLINE deinitializeElems #-}    \
+}
+
+deriveDeinit(Word)
+deriveDeinit(Word8)
+deriveDeinit(Word16)
+deriveDeinit(Word32)
+deriveDeinit(Word64)
+deriveDeinit(Int)
+deriveDeinit(Int8)
+deriveDeinit(Int16)
+deriveDeinit(Int32)
+deriveDeinit(Int64)
+deriveDeinit(Char)
