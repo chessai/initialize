@@ -32,7 +32,8 @@ library
   exposed-modules:
     Initialize
   build-depends:
-      base >=4.2 && <4.13
+    , base >=4.2 && <4.13
+    , primitive >=0.7 && <0.8
   hs-source-dirs:
     src
   default-language:

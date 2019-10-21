@@ -23,8 +23,8 @@ import Data.Word (Word, Word8, Word16, Word32, Word64)
 import Data.Ord (Ord((<)))
 import Data.Eq (Eq)
 import Control.Monad (return)
-import Data.Char (Char)
-import Foreign.Storable (Storable(sizeOf))
+import Foreign.Storable (Storable(sizeOf),poke,pokeElemOff)
+import Data.Primitive.Ptr (setPtr)
 import GHC.Ptr (Ptr, plusPtr)
 import Foreign.Marshal.Alloc ()
 import GHC.IO (IO)
@@ -108,14 +108,14 @@ instance Storable a => Deinitialize (Uninitialized a) where
 
 -----------------------------------------------------------------------------------
 
-#define deriveInit(ty)               \
-instance Initialize (ty) where {     \
-   initialize _ = return ()          \
-;  initializeElemOff _ _ = return () \
-;  initializeElems _ _ = return ()   \
-;  {-# INLINE initialize #-}         \
-;  {-# INLINE initializeElemOff #-}  \
-;  {-# INLINE initializeElems #-}    \
+#define deriveInit(ty)                                       \
+instance Initialize (ty) where {                             \
+   initialize ptr = poke ptr (0 :: ty)                       \
+;  initializeElemOff ptr off = pokeElemOff ptr off (0 :: ty) \
+;  initializeElems ptr len = setPtr ptr len (0 :: ty)        \
+;  {-# INLINE initialize #-}                                 \
+;  {-# INLINE initializeElemOff #-}                          \
+;  {-# INLINE initializeElems #-}                            \
 }
 
 deriveInit(Word)
@@ -128,7 +128,6 @@ deriveInit(Int8)
 deriveInit(Int16)
 deriveInit(Int32)
 deriveInit(Int64)
-deriveInit(Char)
 
 -----------------------------------------------------------------------------------
 
@@ -152,4 +151,3 @@ deriveDeinit(Int8)
 deriveDeinit(Int16)
 deriveDeinit(Int32)
 deriveDeinit(Int64)
-deriveDeinit(Char)
